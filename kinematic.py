@@ -75,6 +75,15 @@ for j in range(4):
 		f.write('\n')
 print('ANS:')
 print(T)
+% phi theta  psi
+    phi = atan2(T(2, 3), T(1, 3)) * RtoD;
+    theta = atan2(cos(phi*DtoR)*T(1, 3) + sin(phi*DtoR)*T(2, 3), T(3,3)) * RtoD;
+    psi = atan2(-sin(phi*DtoR)*T(1, 1)+cos(phi*DtoR)*T(2, 1), -sin(phi*DtoR)*T(1, 2)+cos(phi*DtoR)*T(2, 2)) * RtoD;
+    
+    % result
+ %   disp('   |   n   |   o    |    a    |    p    |');
+  %  disp(T);
+  %  fprintf('|    x     |    y     |    z      |    phi     |   theta   |     psi     |\n| %f | %f | %f | %f | %f | %f |\n', T(1,4), T(2, 4), T(3, 4), phi, theta, psi);
 
 
 
