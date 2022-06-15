@@ -4,6 +4,7 @@
 #include <cuda_runtime.h>
 #include <math.h>
 #define BLOCK_SIZE 16
+#define PI 3.14159265
 
 __global__ static void matMultCUDA(const float* a, size_t lda, const float* b, size_t ldb, float* c, size_t ldc, int n)
 {
@@ -180,9 +181,6 @@ int main()
 		printf("\n");
 	}
 
-	double sec = (double) time / CLOCKS_PER_SEC;
-	printf("Time used: %lf   (%lf GFLOPS)\n", sec, 2.0 * n * n * n / (sec * 1E9));
-
 	free(a);
 	free(b);
 	free(c);	
@@ -190,5 +188,20 @@ int main()
 	free(e);
 	free(f);
 	free(ansGPU);
+	//calculate  x y z phi theta  psi
+	float RtoD = 180.0 / PI;
+	float DtoR  = PI /180.0;
+	float phi, theta ,psi ;
+	phi = atan2(ansGPU[ 1* n + 2],ansGPU[0* n +2])* RtoD ;
+  	theta = atan2(cos(phi*DtoR)*ansGPU[ 0* n + 2] + sin(phi*DtoR)*ansGPU[ 1* n + 2], ansGPU[ 2* n + 2]) * RtoD;
+    psi = atan2(-sin(phi*DtoR)*ansGPU[ 0* n + 0]+cos(phi*DtoR)*ansGPU[ 1* n + 0], -sin(phi*DtoR)*ansGPU[ 0* n + 1]+cos(phi*DtoR)*ansGPU[ 1* n + 1]) * RtoD;
+	float x = ansGPU[0* n +3];
+	float y = ansGPU[ 1* n + 3];
+	float z = ansGPU[ 2* n + 3] ;
+	printf("|     x     |     y     |     z     |    phi    |   theta   |    psi    | \n");
+	printf("|%11f|%11f|%11f|%11f|%11f|%11f|\n",x,y,z,phi,theta,psi);
+
+	double sec = (double) time / CLOCKS_PER_SEC;
+	printf("Time used: %lf   (%lf GFLOPS)\n", sec, 2.0 * n * n * n / (sec * 1E9));
 	return 0;
 }

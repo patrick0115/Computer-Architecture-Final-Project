@@ -1,6 +1,7 @@
 import math
 import numpy as np
 
+
 # Parameter
 a=[0.120 ,0.250, 0.260, 0 ,0 ,0 ]
 d=[0 ,0 ,0, 0, 0, 0, 0 ]
