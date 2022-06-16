@@ -156,88 +156,101 @@ int main()
 {
 	float RtoD = 180.0 / PI;
 	float DtoR  = PI /180.0;
-	float aa[6]={0.120 ,0.250, 0.260, 0 ,0 ,0 };
-	float dd[6]={0 ,0 ,0, 0, 0, 0 };
+	float a[6]={0.120 ,0.250, 0.260, 0 ,0 ,0 };
+	float d[6]={0 ,0 ,0, 0, 0, 0 };
 	float alpha[6]={-90 ,0, 0 ,-90 ,90, 0};
-	float thetaa[6]={90, 99 ,-119 ,-10 ,10, 0 };
-	
-	float *a, *b, *c, *d, *e, *f ,*ansGPU ;
+	float thetaa[6]={90, 99 ,-119 ,-10 ,10, 0 };	
+	float *A1, *A2, *A3, *A4, *A5, *A6 ,*ansGPU ;
 	int n = sqrt(BLOCK_SIZE) ;
+	char str1;
+	printf("Do you want to define input by yourself(y/n)?: \n");
+	printf("y: You have to  enter thetaa[6] \n");
+	printf("n: The default is thetaa[6]={90, 99 ,-119 ,-10 ,10, 0 }; \n");
+	scanf("%c", &str1);
+
+	if(str1 =='y'||str1 =='Y'){
+			printf("thetaa[1]>150 && thetaa[1]<-150 \n");
+			printf("thetaa[2]>100 && thetaa[2]<-30 \n");
+			printf("thetaa[3]>0 && thetaa[3]<-120 \n");
+			printf("thetaa[4]>110 && thetaa[4]<-110 \n");
+			printf("thetaa[5]>180 && thetaa[5]<-180 \n");
+			printf("thetaa[6]>180 && thetaa[6]<-180 \n");
+		for(int j = 0; j < 6; j++){
+			printf("Enter thetaa[%d]: ",j+1);
+			scanf("%f", &thetaa[j]);
+		}
+	}
+
 
 	if(!InitCUDA()) {
 		return 0;
 	}
 
-	a = (float*) malloc(sizeof(float) * n * n);
-	b = (float*) malloc(sizeof(float) * n * n);
-	c = (float*) malloc(sizeof(float) * n * n);	
-	d = (float*) malloc(sizeof(float) * n * n);
-	e = (float*) malloc(sizeof(float) * n * n);
-	f = (float*) malloc(sizeof(float) * n * n);
+	A1 = (float*) malloc(sizeof(float) * n * n);
+	A2 = (float*) malloc(sizeof(float) * n * n);
+	A3 = (float*) malloc(sizeof(float) * n * n);	
+	A4 = (float*) malloc(sizeof(float) * n * n);
+	A5 = (float*) malloc(sizeof(float) * n * n);
+	A6 = (float*) malloc(sizeof(float) * n * n);
 	ansGPU = (float*) malloc(sizeof(float) * n * n);
 	//ansCPU = (float*) malloc(sizeof(float) * n * n);
 	srand(0);
 	
-	CreateA(a,thetaa[0], alpha[0], dd[0], aa[0]);
-	CreateA(b,thetaa[1], alpha[1], dd[1], aa[1]);
-	CreateA(c,thetaa[2], alpha[2], dd[2], aa[2]);
-	CreateA(d,thetaa[3], alpha[3], dd[3], aa[3]);
-	CreateA(e,thetaa[4], alpha[4], dd[4], aa[4]);
-	CreateA(f,thetaa[5], alpha[5], dd[5], aa[5]);
+	CreateA(A1,thetaa[0], alpha[0], d[0], a[0]);
+	CreateA(A2,thetaa[1], alpha[1], d[1], a[1]);
+	CreateA(A3,thetaa[2], alpha[2], d[2], a[2]);
+	CreateA(A4,thetaa[3], alpha[3], d[3], a[3]);
+	CreateA(A5,thetaa[4], alpha[4], d[4], a[4]);
+	CreateA(A6,thetaa[5], alpha[5], d[5], a[5]);
 
 
 
-	int i=0;
-	int j=0;
+/*
 	printf("|    n     |    o     |     a    |     p    |\n");
-	for(i = 0; i < n; i++) {
+	for(int i = 0; i < n; i++) {
 		printf("|");
-		for(j = 0; j < n; j++) {
-			printf("%10f|",b[i * n + j]);
+		for(int j = 0; j < n; j++) {
+			printf("%10f|",A2[i * n + j]);
 		}
 		printf("\n");
 	}
+	*/
 	/*
-	ReadData("A1.txt", a);
-	ReadData("A2.txt", b);
-	ReadData("A3.txt", c);
-	ReadData("A4.txt", d);
-	ReadData("A5.txt", e);
-	ReadData("A6.txt", f);
+	ReadData("A1.txt", A1);
+	ReadData("A2.txt", A2);
+	ReadData("A3.txt", A3);
+	ReadData("A4.txt", A4);
+	ReadData("A5.txt", A5);
+	ReadData("A6.txt", A6);
 */
 
-	clock_t time1 = matmultCUDA(a, n, b, n, ansGPU, n, n);
-	clock_t time2 = matmultCUDA(ansGPU, n, c, n, ansGPU, n, n);
-	clock_t time3 = matmultCUDA(ansGPU, n, d, n, ansGPU, n, n);
-	clock_t time4 = matmultCUDA(ansGPU, n, e, n, ansGPU, n, n);
-	clock_t time5 = matmultCUDA(ansGPU, n, f, n, ansGPU, n, n);
+	clock_t time1 = matmultCUDA(A1, n, A2, n, ansGPU, n, n);
+	clock_t time2 = matmultCUDA(ansGPU, n, A3, n, ansGPU, n, n);
+	clock_t time3 = matmultCUDA(ansGPU, n, A4, n, ansGPU, n, n);
+	clock_t time4 = matmultCUDA(ansGPU, n, A5, n, ansGPU, n, n);
+	clock_t time5 = matmultCUDA(ansGPU, n, A6, n, ansGPU, n, n);
 	clock_t time =time1+ time2+time3+time4+time5;
-	matmult(a, n, b, n, d, n, n);
+	matmult(A1, n, A2, n, A4, n, n);
 	
 	printf("Answer of kinematic from GPU:\n");
 	printf("Cartesian point:\n");
 	printf("|    n     |    o     |     a    |     p    |\n");
-	for(i = 0; i < n; i++) {
+	for(int i = 0; i < n; i++) {
 		printf("|");
-		for(j = 0; j < n; j++) {
+		for(int j = 0; j < n; j++) {
 			printf("%10f|",ansGPU[i * n + j]);
 		}
 		printf("\n");
 	}
 
-	free(a);
-	free(b);
-	free(c);	
-	free(d);
-	free(e);
-	free(f);
-	free(ansGPU);
+
 	//calculate  x y z phi theta  psi
 
 	float phi, theta ,psi ;
 	phi = atan2(ansGPU[ 1* n + 2],ansGPU[0* n +2])* RtoD ;
   	theta = atan2(cos(phi*DtoR)*ansGPU[ 0* n + 2] + sin(phi*DtoR)*ansGPU[ 1* n + 2], ansGPU[ 2* n + 2]) * RtoD;
     psi = atan2(-sin(phi*DtoR)*ansGPU[ 0* n + 0]+cos(phi*DtoR)*ansGPU[ 1* n + 0], -sin(phi*DtoR)*ansGPU[ 0* n + 1]+cos(phi*DtoR)*ansGPU[ 1* n + 1]) * RtoD;
+
 	float x = ansGPU[0* n +3];
 	float y = ansGPU[ 1* n + 3];
 	float z = ansGPU[ 2* n + 3] ;
@@ -245,7 +258,14 @@ int main()
 	printf("|%11f|%11f|%11f|%11f|%11f|%11f|\n",x,y,z,phi,theta,psi);
 
 	double sec = (double) time / CLOCKS_PER_SEC;
-	printf("Time used: %lf   (%lf GFLOPS)\n", sec, 2.0 * n * n * n / (sec * 1E9));
+		
+	free(A1);
+	free(A2);
+	free(A3);	
+	free(A4);
+	free(A5);
+	free(A6);
+	free(ansGPU);
 	return 0;
 	
 }

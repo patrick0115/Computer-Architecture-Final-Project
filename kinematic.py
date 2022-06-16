@@ -37,7 +37,9 @@ def acos(x):
 def atan(x):
 	atan = math.atan(x) * rad
 	return  round(atan,16)
-
+def atan2(x,y):
+	atan2 = math.atan2(x,y) * rad
+	return  round(atan2,16)
 
 
 # DH-model
@@ -76,7 +78,18 @@ for j in range(4):
 		f.write(str(T[j,k]))
 		f.write('\n')
 print('ANS:')
+print('T:')
 print(T)
+
+phi = atan2(T[1,2],T[0,2])
+theta = atan2(cos(phi)*T[ 0, 2] + sin(phi)*T[ 1,2], T[ 2,2])
+psi = atan2(-sin(phi)*T[ 0,0]+cos(phi)*T[ 1, 0], -sin(phi)*T[ 0, 1]+cos(phi)*T[ 1, 1]) 
+
+x = T[0,3]
+y = T[ 1,3]
+z = T[ 2,3] 
+print("|         x        |          y        |          z        |        phi        |       theta       |        psi         | ")
+print('%19.15f'%x,'%19.15f'%y,'%19.15f'%z,'%19.15f'%phi,'%19.15f'%theta,'%19.15f'%psi,sep="|")
 
 
 
