@@ -4,8 +4,10 @@ import numpy as np
 
 # Parameter
 a=[0.120 ,0.250, 0.260, 0 ,0 ,0 ]
-d=[0 ,0 ,0, 0, 0, 0, 0 ]
+d=[0 ,0 ,0, 0, 0, 0 ]
 alpha=[-90 ,0, 0 ,-90 ,90, 0]
+# input
+theta=[90, 99 ,-119 ,-10 ,10, 0 ]
 
 # Trigonometric functions
 rad = 180 / math.pi
@@ -36,8 +38,7 @@ def atan(x):
 	atan = math.atan(x) * rad
 	return  round(atan,16)
 
-# input
-theta=[90, 99 ,-119 ,-10 ,10, 0 ]
+
 
 # DH-model
 def dh(theta,alpha,d,a):
@@ -51,8 +52,8 @@ A = np.empty((6, 4, 4))
 T = np.empty((4, 4))
 for i, item in enumerate(A):
 	A[i] = dh(theta[i], alpha[i], d[i], a[i])
-#	print('A[',i+1,']:')
-#	print(A[i])
+	print('A[',i+1,']:')
+	print(A[i])
 	
 	
 # write A in TXT
@@ -76,16 +77,6 @@ for j in range(4):
 		f.write('\n')
 print('ANS:')
 print(T)
-% phi theta  psi
-    phi = atan2(T(2, 3), T(1, 3)) * RtoD;
-    theta = atan2(cos(phi*DtoR)*T(1, 3) + sin(phi*DtoR)*T(2, 3), T(3,3)) * RtoD;
-    psi = atan2(-sin(phi*DtoR)*T(1, 1)+cos(phi*DtoR)*T(2, 1), -sin(phi*DtoR)*T(1, 2)+cos(phi*DtoR)*T(2, 2)) * RtoD;
-    
-    % result
- %   disp('   |   n   |   o    |    a    |    p    |');
-  %  disp(T);
-  %  fprintf('|    x     |    y     |    z      |    phi     |   theta   |     psi     |\n| %f | %f | %f | %f | %f | %f |\n', T(1,4), T(2, 4), T(3, 4), phi, theta, psi);
-
 
 
 

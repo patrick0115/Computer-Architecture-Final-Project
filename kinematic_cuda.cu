@@ -131,9 +131,35 @@ void ReadData(char *name, float* matrix){
 		}
 	fclose(fp);
 }
+void CreateA(float* matrix,float theta,float alpha,float d,float a){
+
+	float DtoR  = PI /180.0;
+	matrix[0]=cos(theta*DtoR );
+	matrix[1]=-sin(theta*DtoR)*cos(alpha*DtoR);
+	matrix[2]=sin(theta*DtoR)*sin(alpha*DtoR);
+	matrix[3]=a*cos(theta*DtoR);
+	matrix[4]=sin(theta*DtoR);
+	matrix[5]=cos(theta*DtoR)*cos(alpha*DtoR);
+	matrix[6]=-cos(theta*DtoR)*sin(alpha*DtoR);
+	matrix[7]=a*sin(theta*DtoR);
+	matrix[8]=0;
+	matrix[9]=sin(alpha*DtoR);
+	matrix[10]=cos(alpha*DtoR);
+	matrix[11]=d;
+	matrix[12]=0;
+	matrix[13]=0;
+	matrix[14]=0;
+	matrix[15]=1;
+}
 
 int main()
 {
+	float RtoD = 180.0 / PI;
+	float DtoR  = PI /180.0;
+	float aa[6]={0.120 ,0.250, 0.260, 0 ,0 ,0 };
+	float dd[6]={0 ,0 ,0, 0, 0, 0 };
+	float alpha[6]={-90 ,0, 0 ,-90 ,90, 0};
+	float thetaa[6]={90, 99 ,-119 ,-10 ,10, 0 };
 	
 	float *a, *b, *c, *d, *e, *f ,*ansGPU ;
 	int n = sqrt(BLOCK_SIZE) ;
@@ -150,17 +176,35 @@ int main()
 	f = (float*) malloc(sizeof(float) * n * n);
 	ansGPU = (float*) malloc(sizeof(float) * n * n);
 	//ansCPU = (float*) malloc(sizeof(float) * n * n);
-	srand(0);    
+	srand(0);
 	
+	CreateA(a,thetaa[0], alpha[0], dd[0], aa[0]);
+	CreateA(b,thetaa[1], alpha[1], dd[1], aa[1]);
+	CreateA(c,thetaa[2], alpha[2], dd[2], aa[2]);
+	CreateA(d,thetaa[3], alpha[3], dd[3], aa[3]);
+	CreateA(e,thetaa[4], alpha[4], dd[4], aa[4]);
+	CreateA(f,thetaa[5], alpha[5], dd[5], aa[5]);
+
+
+
 	int i=0;
 	int j=0;
-	
+	printf("|    n     |    o     |     a    |     p    |\n");
+	for(i = 0; i < n; i++) {
+		printf("|");
+		for(j = 0; j < n; j++) {
+			printf("%10f|",b[i * n + j]);
+		}
+		printf("\n");
+	}
+	/*
 	ReadData("A1.txt", a);
 	ReadData("A2.txt", b);
 	ReadData("A3.txt", c);
 	ReadData("A4.txt", d);
 	ReadData("A5.txt", e);
 	ReadData("A6.txt", f);
+*/
 
 	clock_t time1 = matmultCUDA(a, n, b, n, ansGPU, n, n);
 	clock_t time2 = matmultCUDA(ansGPU, n, c, n, ansGPU, n, n);
@@ -189,8 +233,7 @@ int main()
 	free(f);
 	free(ansGPU);
 	//calculate  x y z phi theta  psi
-	float RtoD = 180.0 / PI;
-	float DtoR  = PI /180.0;
+
 	float phi, theta ,psi ;
 	phi = atan2(ansGPU[ 1* n + 2],ansGPU[0* n +2])* RtoD ;
   	theta = atan2(cos(phi*DtoR)*ansGPU[ 0* n + 2] + sin(phi*DtoR)*ansGPU[ 1* n + 2], ansGPU[ 2* n + 2]) * RtoD;
@@ -204,4 +247,5 @@ int main()
 	double sec = (double) time / CLOCKS_PER_SEC;
 	printf("Time used: %lf   (%lf GFLOPS)\n", sec, 2.0 * n * n * n / (sec * 1E9));
 	return 0;
+	
 }
